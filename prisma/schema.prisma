@@ -14,30 +14,139 @@ datasource db {
 }
 
 model User {
-  id       String     @id @default(uuid())
-  email    String     @unique
-  status   UserStatus @default(Active)
-  password String
-  role     UserRole
-  crateAt  DateTime   @default(now())
-  updateAt DateTime   @updatedAt
-  admin    Admin?
+  id               String            @id @default(uuid())
+  email            String            @unique
+  status           UserStatus        @default(Active)
+  password         String
+  role             UserRole          @default(Normal)
+  createdAt             DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  profile          Profile?
+  parmanentAddress ParmanentAddress?
+  presentAddress   PresentAddress?
+  userSkill        UserSkill[]
+  userExperience   UserExperience[]
+  userEducation    UserEducation[]
 
   @@map("users")
 }
 
-model Admin {
-  id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  profilePhoto String?
-  phoneNumber  String
-  isDeleted    Boolean  @default(false)
-  createAt     DateTime @default(now())
-  updateAt     DateTime @updatedAt
-  user         User     @relation(fields: [email], references: [email])
+model Profile {
+  id          String   @id @default(uuid())
+  name        String
+  phoneNumber String?
+  about       String?
+  photo       String?
+  email       String   @unique
+  linkedin    String?
+  github      String?
+  protfolio   String?
+  user        User     @relation(fields: [email], references: [email])
+  createdAt        DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  @@map("admin")
+  @@map("profile")
+}
+
+model ParmanentAddress {
+  id         String  @id @default(uuid())
+  email      String  @unique
+  house      String?
+  rode       String?
+  village    String?
+  postOffice String?
+  thana      String
+  city       String
+  distic     String
+
+  user     User     @relation(fields: [email], references: [email])
+  createdAt     DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("parmanent_address")
+}
+
+model Skill {
+  id    String @id @default(uuid())
+  title String
+
+  createdAt     DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userSkill UserSkill[]
+
+  @@map("skill")
+}
+
+model UserSkill {
+  skillId   String
+  userEmail String
+  user      User   @relation(fields: [userEmail], references: [email])
+  skill     Skill  @relation(fields: [skillId], references: [id])
+
+  @@id([skillId, userEmail])
+  @@map("user_skill")
+}
+
+model Experience {
+  id              String           @id @default(uuid())
+  conpanyName     String
+  designation     String
+  startDate       String
+  endDate         String
+  resposibilities String?
+  createdAt            DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  userExperience  UserExperience[]
+
+  @@map("experience")
+}
+
+model UserExperience {
+  experienceId String
+  userEmail    String
+  user         User       @relation(fields: [userEmail], references: [email])
+  experience   Experience @relation(fields: [experienceId], references: [id])
+
+  @@id([userEmail, experienceId])
+  @@map("user_experience")
+}
+
+model PresentAddress {
+  id         String  @id @default(uuid())
+  email      String  @unique
+  house      String?
+  rode       String?
+  village    String?
+  postOffice String?
+  thana      String
+  city       String
+  distic     String
+
+  user     User     @relation(fields: [email], references: [email])
+  createdAt     DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("present_address")
+}
+
+model Education {
+  id            String          @id @default(uuid())
+  degreeTitle   String
+  institue      String
+  result        Float
+  passingYear   Int
+  userEducation UserEducation[]
+}
+
+model UserEducation {
+  institueId String
+  userEmail  String
+  user       User      @relation(fields: [userEmail], references: [email])
+  education  Education @relation(fields: [institueId], references: [id])
+
+  @@id([institueId, userEmail])
+  @@map("user_education")
 }
 
 enum UserRole {
