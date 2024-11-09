@@ -1,8 +1,9 @@
 import express, { Application, Request, Response, urlencoded } from "express";
 import cors from "cors";
 import router from "./router";
-import globalError from "./shared/globalError";
+
 import notFound from "./shared/notFound";
+import globalError from "./shared/globalError";
 
 const app: Application = express();
 
